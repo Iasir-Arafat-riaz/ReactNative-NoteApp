@@ -5,11 +5,20 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
 import SignIn from "./src/screens/SignIn";
 import SignUp from "./src/screens/SignUp";
-import Create from "./src/screens/create";
+import Create from "./src/screens/Create";
 import Edit from "./src/screens/Edit";
+import { useFonts } from 'expo-font';
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  const [fontsLoaded] = useFonts({
+    'antonioMedium': require('./assets/fonts/Antonio-Medium.ttf'),
+    'spartanBold': require('./assets/fonts/Spartan-Bold.ttf'),
+    'spartanRegular': require('./assets/fonts/Spartan-Regular.ttf'),
+  });
+
   const user = false;
   const MyTheme = {
     ...DefaultTheme,
@@ -33,6 +42,7 @@ export default function App() {
               name="SignIn"
               component={SignIn}
               options={{ headerShown: false }}
+              
             />
             <Stack.Screen name="SignUp" component={SignUp} />
           </>
