@@ -6,14 +6,45 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Text from "../../commonText/Text";
 import Button from "../components/Button";
 import { colors } from "../theme/colors";
 import Input from "../components/Input";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { app } from "../../firebase";
+
+const auth = getAuth(app);
+
+
+
 
 export default function SignUp({ navigation }) {
+  const [gender,setGender]=useState(null)
+  //declare some state for input field
+  const[email,setEmail]=useState("");
+  const[password,setPassword]=useState("");
+  const [name,setName]=useState("");
+  const [age,setAge]=useState("");
+  const genderOption = ["Male", "Female"];
+ const userInfo={email,password,name,age,gender};
+
+ 
+ const signUp =()=>{
+  createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    console.log(user)
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // ..
+  });
+ }
   return (
     <SafeAreaView style={{ paddingHorizontal: 18, flex: 1 }}>
       <ScrollView>
@@ -21,19 +52,58 @@ export default function SignUp({ navigation }) {
           <Image
             source={require("../../assets/signUp.png")}
             style={{
-              alignSelf: "center"
+              alignSelf: "center",
             }}
-    
           />
           <Text style={styles.reminder} preset="h4">
             Please Register Now
           </Text>
-          <View style={styles.inputDiv}>
-            <Input placeholder="Type your email" />
-            <Input placeholder="Password" secureTextEntry />
-            <Input placeholder="Type your Full N ame" />
-            <Input placeholder="Type your Age" />
+          <View>
+            <Input placeholder="Type your Email" onChange={(text)=>setEmail(text)} />
+            <Input placeholder="Type your Password" secureTextEntry onChange={(text)=>setPassword(text)}/>
+            <Input placeholder="Type your Full Name" onChange={(text)=>setName(text)} />
+            <Input placeholder="Type your Age" onChange={(text)=>setAge(text)} />
           </View>
+          {genderOption.map((option, index) => {
+            let selected=false;
+            if(option===gender){
+              selected=true
+            }
+            //or 
+            // const selected= option===gender
+            return(
+              <Pressable key={index} style={styles.radioContainer} onPress={()=>setGender(option)}>
+              <View
+                style={[
+                  styles.outerCircle,
+                  selected && styles.selectedOuterCircle,
+                ]}
+              >
+                <View
+                  style={[
+                    styles.innerCircle,
+                    selected && styles.selectedInnerCircle,
+                  ]}
+                />
+              </View>
+              <Text preset="regularBold" style={{ marginLeft: 10 }}>
+                {option}
+              </Text>
+            </Pressable>
+            )
+          })}
+          {/* <Pressable style={styles.radioContainer}>
+            <View style={[styles.outerCircle,selected&& styles.selectedOuterCircle]}>
+              <View style={[styles.innerCircle,selected&& styles.selectedInnerCircle ]}/>
+            </View>
+            <Text preset="regularBold" style={{marginLeft:10}}>Male</Text>
+          </Pressable>
+          <Pressable style={styles.radioContainer}>
+            <View style={[styles.outerCircle,selected&& styles.selectedOuterCircle]}>
+              <View style={[styles.innerCircle,selected&& styles.selectedInnerCircle ]}/>
+            </View>
+            <Text preset="regularBold" style={{marginLeft:10}}>Female</Text>
+          </Pressable> */}
         </View>
         <View style={styles.lastContent}>
           <Button
@@ -41,8 +111,9 @@ export default function SignUp({ navigation }) {
             customStyle={{
               backgroundColor: colors.orange,
               alignSelf: "center",
-              marginVertical: 30,
+              marginVertical: 25,
             }}
+            onPress={signUp}
           />
           <Pressable
             style={{ alignSelf: "center" }}
@@ -72,5 +143,43 @@ const styles = StyleSheet.create({
   reminder: {
     alignSelf: "center",
     margin: 20,
+  },
+  radioContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+  },
+  outerCircle: {
+    height: 24,
+    width: 24,
+    borderWidth: 2,
+    borderColor: colors.gray,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  innerCircle: {
+    width: 14,
+    height: 14,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: colors.gray,
+  },
+  selectedOuterCircle: {
+    height: 24,
+    width: 24,
+    borderWidth: 2,
+    borderColor: colors.orange,
+    borderRadius: 12,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedInnerCircle: {
+    width: 14,
+    height: 14,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: colors.orange,
+    backgroundColor: colors.orange,
   },
 });

@@ -7,7 +7,7 @@ import { colors } from "../theme/colors";
 import Button from "../components/Button";
 import Input from "../components/Input";
 
-export default function SignIn({navigation}) {
+export default function SignIn({ navigation }) {
   return (
     <SafeAreaView style={{ paddingHorizontal: 18, flex: 1 }}>
       <View>
@@ -19,7 +19,7 @@ export default function SignIn({navigation}) {
           Never Forget your notes
         </Text>
         <View style={styles.inputDiv}>
-          <Input placeholder={"Enter your email"}/>
+          <Input placeholder={"Enter your email"} />
           <Input placeholder={"Enter your password"} secureTextEntry />
         </View>
       </View>
@@ -32,10 +32,13 @@ export default function SignIn({navigation}) {
             marginVertical: 60,
           }}
         />
-        <Pressable style={{ alignSelf: "center" }} onPress={()=>navigation.navigate("SignUp")}>
+        <Pressable
+          style={{ alignSelf: "center" }}
+          onPress={() => navigation.navigate("SignUp")}
+        >
           <Text preset="h4">
             Don't have an account? {""}
-            <Text preset="h4" style={{ color: colors.green }} >
+            <Text preset="h4" style={{ color: colors.green }}>
               Signup
             </Text>
           </Text>

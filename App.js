@@ -9,6 +9,12 @@ import Create from "./src/screens/Create";
 import Edit from "./src/screens/Edit";
 import { useFonts } from 'expo-font';
 
+//firebase
+
+
+// Initialize Firebase
+
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
