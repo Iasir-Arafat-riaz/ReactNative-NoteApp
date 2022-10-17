@@ -27,6 +27,9 @@ export default function App() {
       background: "#fff ",
     },
   };
+  if (!fontsLoaded) {
+    return <Text>Font not found</Text>;
+  }
   return (
     <NavigationContainer theme={MyTheme} styles={styles.container}>
       <Stack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
@@ -44,7 +47,7 @@ export default function App() {
               options={{ headerShown: false }}
               
             />
-            <Stack.Screen name="SignUp" component={SignUp} />
+            <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
           </>
         )}
       </Stack.Navigator>
