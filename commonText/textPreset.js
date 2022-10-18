@@ -15,7 +15,7 @@ const regularBold ={
 }
 const uniqBold={
     fontFamily:typography.uniqBold,
-    color:colors.black
+    // color:colors.black
 }
 
 export const TextPresets={
