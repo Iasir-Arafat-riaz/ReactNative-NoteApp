@@ -1,13 +1,40 @@
 import { View, Image, StyleSheet, TextInput, Pressable } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { typography } from "../theme/typography";
 import Text from "../../commonText/Text";
 import { colors } from "../theme/colors";
 import Button from "../components/Button";
 import Input from "../components/Input";
+import { showMessage, hideMessage } from "react-native-flash-message";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 
 export default function SignIn({ navigation }) {
+  const[email,setEmail]=useState("");
+  const[password,setPassword]=useState("");
+  const [user,setUser]=useState(null);
+  
+  const signIn = () => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    setUser(user)
+    console.log(user)
+    // ...
+  })
+  .catch((error) => {
+    // const errorCode = error.code;
+    const errorMessage = error.message;
+    showMessage({
+      message: `ERROR! ${errorMessage}`,
+      type: "danger",
+    });
+  });
+  };
+
   return (
     <SafeAreaView style={{ paddingHorizontal: 18, flex: 1 }}>
       <View>
@@ -19,8 +46,8 @@ export default function SignIn({ navigation }) {
           Never Forget your notes
         </Text>
         <View style={styles.inputDiv}>
-          <Input placeholder={"Enter your email"} />
-          <Input placeholder={"Enter your password"} secureTextEntry />
+          <Input placeholder={"Enter your email"}  onChange={(text)=>setEmail(text)} autoCapitalize={"none"}/>
+          <Input placeholder={"Enter your password"} secureTextEntry  onChange={(text)=>setPassword(text)} />
         </View>
       </View>
       <View style={styles.lastContent}>
@@ -31,6 +58,7 @@ export default function SignIn({ navigation }) {
             alignSelf: "center",
             marginVertical: 60,
           }}
+          onPress={signIn}
         />
         <Pressable
           style={{ alignSelf: "center" }}

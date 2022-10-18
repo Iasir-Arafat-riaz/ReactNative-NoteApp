@@ -13,7 +13,10 @@ import Button from "../components/Button";
 import { colors } from "../theme/colors";
 import Input from "../components/Input";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { app } from "../../firebase";
+import { app, db } from "../../firebase";
+import { collection, addDoc } from "firebase/firestore";
+import { showMessage, hideMessage } from "react-native-flash-message";
+
 
 const auth = getAuth(app);
 
@@ -31,19 +34,33 @@ export default function SignUp({ navigation }) {
  const userInfo={email,password,name,age,gender};
 
  
- const signUp =()=>{
-  createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    console.log(user)
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ..
-  });
+ const signUp = async()=>{
+  //1.create user with email and password
+  //2. add user profile to database
+  //3. navigate to home screen
+
+  try{
+    const result= await createUserWithEmailAndPassword(auth, email, password)
+    await addDoc(collection(db, "users"), {
+      email:email,
+      password:password,
+      name:name,
+      age:age,
+      gender:gender,
+      uid:result.user.uid
+
+    });
+    console.log("done",result.user.uid);
+  }
+  catch(error){
+console.log(error.message)
+showMessage({
+  message: `ERROR! ${error.message}`,
+  type: "danger",
+});
+  }
+  
+  
  }
   return (
     <SafeAreaView style={{ paddingHorizontal: 18, flex: 1 }}>
@@ -59,9 +76,9 @@ export default function SignUp({ navigation }) {
             Please Register Now
           </Text>
           <View>
-            <Input placeholder="Type your Email" onChange={(text)=>setEmail(text)} />
+            <Input placeholder="Type your Email" onChange={(text)=>setEmail(text)} autoCapitalize={"none"}/>
             <Input placeholder="Type your Password" secureTextEntry onChange={(text)=>setPassword(text)}/>
-            <Input placeholder="Type your Full Name" onChange={(text)=>setName(text)} />
+            <Input placeholder="Type your Full Name" onChange={(text)=>setName(text)} autoCapitalize={"words"}/>
             <Input placeholder="Type your Age" onChange={(text)=>setAge(text)} />
           </View>
           {genderOption.map((option, index) => {

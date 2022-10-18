@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./src/screens/Home";
@@ -8,9 +8,14 @@ import SignUp from "./src/screens/SignUp";
 import Create from "./src/screens/Create";
 import Edit from "./src/screens/Edit";
 import { useFonts } from 'expo-font';
+import FlashMessage from "react-native-flash-message";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "./firebase";
+import { useEffect, useState } from "react";
+import { colors } from "./src/theme/colors";
 
 //firebase
-
+const auth = getAuth(app);
 
 // Initialize Firebase
 
@@ -18,15 +23,29 @@ import { useFonts } from 'expo-font';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
+const [user,setUser]=useState(null);
+const [loading,setLoading]=useState(true);
   const [fontsLoaded] = useFonts({
     'antonioMedium': require('./assets/fonts/Antonio-Medium.ttf'),
     'spartanBold': require('./assets/fonts/Spartan-Bold.ttf'),
     'spartanRegular': require('./assets/fonts/Spartan-Regular.ttf'),
   });
 
-  const user = false;
-  const MyTheme = {
+  //obserber
+useEffect(()=>{
+  const authSubscription=onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setUser(user)
+      setLoading(false)
+    } else {
+      setUser(null)
+      setLoading(false)
+    }
+  });
+  return authSubscription;
+},[auth])
+  
+  const MyTheme = {  
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
@@ -36,12 +55,20 @@ export default function App() {
   if (!fontsLoaded) {
     return <Text>Font not found</Text>;
   }
+if(loading){
+  return <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+    <ActivityIndicator color={colors.green} size="large"/>
+  </View>
+}
+
   return (
     <NavigationContainer theme={MyTheme} styles={styles.container}>
       <Stack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
         {user ? (
           <>
-            <Stack.Screen name="Home" component={Home} />
+            <Stack.Screen name="Home">
+              {(props)=><Home {...props} user={user}/>}
+            </Stack.Screen>
             <Stack.Screen name="Create" component={Create} />
             <Stack.Screen name="Edit" component={Edit} />
           </>
@@ -57,6 +84,7 @@ export default function App() {
           </>
         )}
       </Stack.Navigator>
+      <FlashMessage position="top" />
     </NavigationContainer>
   );
 }
