@@ -16,52 +16,48 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { app, db } from "../../firebase";
 import { collection, addDoc } from "firebase/firestore";
 import { showMessage, hideMessage } from "react-native-flash-message";
-
+import RadioInput from "../components/RadioInput";
 
 const auth = getAuth(app);
 
-
-
-
 export default function SignUp({ navigation }) {
-  const [gender,setGender]=useState(null)
+  const [gender, setGender] = useState(null);
   //declare some state for input field
-  const[email,setEmail]=useState("");
-  const[password,setPassword]=useState("");
-  const [name,setName]=useState("");
-  const [age,setAge]=useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
   const genderOption = ["Male", "Female"];
- const userInfo={email,password,name,age,gender};
+  const userInfo = { email, password, name, age, gender };
 
- 
- const signUp = async()=>{
-  //1.create user with email and password
-  //2. add user profile to database
-  //3. navigate to home screen
+  const signUp = async () => {
+    //1.create user with email and password
+    //2. add user profile to database
+    //3. navigate to home screen
 
-  try{
-    const result= await createUserWithEmailAndPassword(auth, email, password)
-    await addDoc(collection(db, "users"), {
-      email:email,
-      password:password,
-      name:name,
-      age:age,
-      gender:gender,
-      uid:result.user.uid
-
-    });
-    console.log("done",result.user.uid);
-  }
-  catch(error){
-console.log(error.message)
-showMessage({
-  message: `ERROR! ${error.message}`,
-  type: "danger",
-});
-  }
-  
-  
- }
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      await addDoc(collection(db, "users"), {
+        email: email,
+        password: password,
+        name: name,
+        age: age,
+        gender: gender,
+        uid: result.user.uid,
+      });
+      console.log("done", result.user.uid);
+    } catch (error) {
+      console.log(error.message);
+      showMessage({
+        message: `ERROR! ${error.message}`,
+        type: "danger",
+      });
+    }
+  };
   return (
     <SafeAreaView style={{ paddingHorizontal: 18, flex: 1 }}>
       <ScrollView>
@@ -76,51 +72,41 @@ showMessage({
             Please Register Now
           </Text>
           <View>
-            <Input placeholder="Type your Email" onChange={(text)=>setEmail(text)} autoCapitalize={"none"}/>
-            <Input placeholder="Type your Password" secureTextEntry onChange={(text)=>setPassword(text)}/>
-            <Input placeholder="Type your Full Name" onChange={(text)=>setName(text)} autoCapitalize={"words"}/>
-            <Input placeholder="Type your Age" onChange={(text)=>setAge(text)} />
+            <Input
+              placeholder="Type your Email"
+              onChange={(text) => setEmail(text)}
+              autoCapitalize={"none"}
+            />
+            <Input
+              placeholder="Type your Password"
+              secureTextEntry
+              onChange={(text) => setPassword(text)}
+            />
+            <Input
+              placeholder="Type your Full Name"
+              onChange={(text) => setName(text)}
+              autoCapitalize={"words"}
+            />
+            <Input
+              placeholder="Type your Age"
+              onChange={(text) => setAge(text)}
+            />
           </View>
           {genderOption.map((option, index) => {
-            let selected=false;
-            if(option===gender){
-              selected=true
+            let selected = false;
+            if (option === gender) {
+              selected = true;
             }
-            //or 
-            // const selected= option===gender
-            return(
-              <Pressable key={index} style={styles.radioContainer} onPress={()=>setGender(option)}>
-              <View
-                style={[
-                  styles.outerCircle,
-                  selected && styles.selectedOuterCircle,
-                ]}
-              >
-                <View
-                  style={[
-                    styles.innerCircle,
-                    selected && styles.selectedInnerCircle,
-                  ]}
-                />
-              </View>
-              <Text preset="regularBold" style={{ marginLeft: 10 }}>
-                {option}
-              </Text>
-            </Pressable>
-            )
+
+            return (
+              <RadioInput
+                selected={selected}
+                option={option}
+                key={index}
+                onPress={() => setGender(option)}
+              />
+            );
           })}
-          {/* <Pressable style={styles.radioContainer}>
-            <View style={[styles.outerCircle,selected&& styles.selectedOuterCircle]}>
-              <View style={[styles.innerCircle,selected&& styles.selectedInnerCircle ]}/>
-            </View>
-            <Text preset="regularBold" style={{marginLeft:10}}>Male</Text>
-          </Pressable>
-          <Pressable style={styles.radioContainer}>
-            <View style={[styles.outerCircle,selected&& styles.selectedOuterCircle]}>
-              <View style={[styles.innerCircle,selected&& styles.selectedInnerCircle ]}/>
-            </View>
-            <Text preset="regularBold" style={{marginLeft:10}}>Female</Text>
-          </Pressable> */}
         </View>
         <View style={styles.lastContent}>
           <Button

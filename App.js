@@ -69,8 +69,12 @@ if(loading){
             <Stack.Screen name="Home" options={{ headerShown: false }}>
               {(props)=><Home {...props} user={user}/>}
             </Stack.Screen>
-            <Stack.Screen name="Create" component={Create} />
-            <Stack.Screen name="Edit" component={Edit} />
+            <Stack.Screen name="Create" options={{headerTitle: 'Create Notes'}}>
+            {(props)=><Create {...props} user={user}/>}
+            </Stack.Screen>
+            <Stack.Screen name="Edit" >
+            {(props)=><Edit {...props} user={user}/>}
+            </Stack.Screen>
           </>
         ) : (
           <>

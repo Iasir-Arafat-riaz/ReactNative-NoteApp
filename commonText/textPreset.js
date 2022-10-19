@@ -7,6 +7,11 @@ const regular ={
     fontSize:16,
     color:colors.black
 }
+const regularSmall ={
+    fontFamily:typography.regular,
+    fontSize:14,
+    color:colors.black
+}
 
 const regularBold ={
     fontFamily:typography.bold,
@@ -20,7 +25,7 @@ const uniqBold={
 
 export const TextPresets={
     default:regular,
-    
+    regularSmall,
     regularBold:regularBold,
     uniqBold:uniqBold,
     h1:{...uniqBold,fontSize:32},
