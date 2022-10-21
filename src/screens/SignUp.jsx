@@ -36,6 +36,18 @@ export default function SignUp({ navigation }) {
     //3. navigate to home screen
 
     try {
+      if(password.length<6){
+        return(showMessage({
+          message: `Password need must 6 character `,
+          type: "danger",
+        }))
+      }
+      if(name.length<1||age.length<1){
+        return(showMessage({
+          message: `Need to fill Full name or age `,
+          type: "warning",
+        }))
+      }
       const result = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -53,7 +65,7 @@ export default function SignUp({ navigation }) {
     } catch (error) {
       console.log(error.message);
       showMessage({
-        message: `ERROR! ${error.message}`,
+        message: `ERROR! Incorrect your input `,
         type: "danger",
       });
     }

@@ -16,6 +16,12 @@ export default function SignIn({ navigation }) {
   const [user,setUser]=useState(null);
   
   const signIn = () => {
+    if(password.length<1 || email<1){
+      return (showMessage({
+        message: "Your email or password field empty",
+        type: "warning"
+      }))
+    }
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
   .then((userCredential) => {
@@ -29,7 +35,7 @@ export default function SignIn({ navigation }) {
     // const errorCode = error.code;
     const errorMessage = error.message;
     showMessage({
-      message: `ERROR! ${errorMessage}`,
+      message: `ERROR! ${"invalid email or password"}`,
       type: "danger",
     });
   });

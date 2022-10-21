@@ -111,7 +111,7 @@ export default function Home({ user, navigation }) {
           </Text>
         </TouchableOpacity>
         <View style={styles.addNote}>
-          <Text preset="h4">ADD NOTES</Text>
+          <Text preset="h3">ADD NOTES</Text>
           <TouchableOpacity onPress={() => navigation.navigate("Create")}>
             <Ionicons name="add-circle" size={34} color="green" />
           </TouchableOpacity>
@@ -123,6 +123,9 @@ export default function Home({ user, navigation }) {
             keyExtractor={(item,index) => index}
           />
         </View>
+        {
+          notes.length ==0? <View ><Text preset="h3" style={{padding:spacing[4],justifyContent:"center",alignItems:"center",marginTop:20,color:colors.orange}}>Your Note is Empty...Please Add Note</Text></View>:""
+        }
       </ScrollView>
     </SafeAreaView>
   );

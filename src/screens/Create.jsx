@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Input from "../components/Input";
@@ -10,6 +10,7 @@ import { colors } from "../theme/colors";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase";
 import { showMessage } from "react-native-flash-message";
+import CommonHeader from "../components/CommonHeader";
 
 export default function Create({ user ,navigation}) {
   const [noteColor, setNoteColor] = useState("gray");
@@ -17,8 +18,17 @@ export default function Create({ user ,navigation}) {
   const [noteDescription, setNoteDescription] = useState("");
   const notesColors = ["orange", "red", "gray", "green", "blue"];
   const test = { note: noteColor };
+  const [loading,setLoading]=useState(false);
   const handleNotesAdd = async () => {
     try {
+      
+      if(noteTitle.length<1 || noteDescription<1){
+        return (showMessage({
+          message: "PLEASE FILL ALL FIELD",
+          type: "warning"
+        }))
+      }
+      setLoading(true)
        await addDoc(collection(db, "notes"), {
         noteTitle,
         noteDescription,
@@ -26,6 +36,7 @@ export default function Create({ user ,navigation}) {
         uid: user.uid,
       });
       navigation.goBack();
+      setLoading(false)
       showMessage({
         message: "Your Note Created Successfully",
         type: "success",
@@ -35,8 +46,15 @@ export default function Create({ user ,navigation}) {
       console.log("Error ==>", error);
     }
   };
+if(loading){
+  return <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+    <ActivityIndicator color={colors.green} size="large"/>
+  </View>
+}
+
   return (
     <SafeAreaView style={{ paddingHorizontal: 18 }}>
+      <CommonHeader title={"Create Your Note"}/>
       <View>
         <Input
           placeholder={"Enter Your Note Title"}

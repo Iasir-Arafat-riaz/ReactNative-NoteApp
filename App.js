@@ -13,6 +13,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "./firebase";
 import { useEffect, useState } from "react";
 import { colors } from "./src/theme/colors";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 //firebase
 const auth = getAuth(app);
@@ -63,18 +64,22 @@ if(loading){
 
   return (
     <NavigationContainer theme={MyTheme} styles={styles.container}>
+      <FlashMessage style={{ zIndex: 1000 }} position="bottom" color="black" />
       <Stack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
         {user ? (
           <>
             <Stack.Screen name="Home" options={{ headerShown: false }}>
               {(props)=><Home {...props} user={user}/>}
             </Stack.Screen>
-            <Stack.Screen name="Create" options={{headerTitle: 'Create Notes'}}>
+            <Stack.Screen name="Create" options={{ headerShown: false }}>
             {(props)=><Create {...props} user={user}/>}
             </Stack.Screen>
-            <Stack.Screen name="Edit" >
+            <Stack.Screen name="Edit"  options={{ headerShown: false }}>
             {(props)=><Edit {...props} user={user}/>}
             </Stack.Screen>
+            {/* <Stack.Screen name="Edit"  options={{headerTitle:"Update"}}>
+            {(props)=><Edit {...props} user={user}/>}
+            </Stack.Screen> */}
           </>
         ) : (
           <>
@@ -87,8 +92,9 @@ if(loading){
             <Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }}/>
           </>
         )}
+        
       </Stack.Navigator>
-      <FlashMessage position="top" />
+      
     </NavigationContainer>
   );
 }
