@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,8 +24,10 @@ import { showMessage } from "react-native-flash-message";
 
 export default function Home({ user, navigation }) {
   const [notes, setNotes] = useState([]);
+  const [loading,setLoading]=useState(true);
   //data lestener
   useEffect(() => {
+    // setLoading(true);
     const q = query(collection(db, "notes"), where("uid", "==", user.uid));
 
     const queryNote = onSnapshot(q, (querySnapshot) => {
@@ -35,6 +38,7 @@ export default function Home({ user, navigation }) {
         noteList.push({...doc.data(),id:doc.id});
       });
       setNotes(noteList);
+      setLoading(false)
     });
     return queryNote;
   }, []);
@@ -100,6 +104,12 @@ export default function Home({ user, navigation }) {
       </View>
     );
   };
+
+  if(loading){
+    return <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+      <ActivityIndicator color={colors.green} size="large"/>
+    </View>
+  }
 
   return (
     <SafeAreaView>
