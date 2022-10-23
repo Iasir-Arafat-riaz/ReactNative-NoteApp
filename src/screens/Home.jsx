@@ -6,6 +6,7 @@ import {
   FlatList,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,36 +14,41 @@ import { getAuth, signOut } from "firebase/auth";
 import Text from "../../commonText/Text";
 import { colors } from "../theme/colors";
 import { Ionicons } from "@expo/vector-icons";
-import { collection, deleteDoc, doc, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import { spacing } from "../theme/spacing";
 import { AntDesign } from "@expo/vector-icons";
 import { showMessage } from "react-native-flash-message";
 
-
-
-
 export default function Home({ user, navigation }) {
   const [notes, setNotes] = useState([]);
-  const [loading,setLoading]=useState(true);
+  const [loading, setLoading] = useState(true);
+  
+  const [removeLoading, setRemoveLoading] = useState(false);
   //data lestener
   useEffect(() => {
     // setLoading(true);
     const q = query(collection(db, "notes"), where("uid", "==", user.uid));
 
     const queryNote = onSnapshot(q, (querySnapshot) => {
-      
       const noteList = [];
       querySnapshot.forEach((doc) => {
         // console.log(doc.id)
-        noteList.push({...doc.data(),id:doc.id});
+        noteList.push({ ...doc.data(), id: doc.id });
       });
       setNotes(noteList);
-      setLoading(false)
+      setLoading(false);
     });
     return queryNote;
   }, []);
-// console.log(notes)
+  // console.log(notes)
   const logOut = () => {
     const auth = getAuth();
     signOut(auth)
@@ -54,10 +60,9 @@ export default function Home({ user, navigation }) {
         // An error happened.
       });
   };
-
+ 
   const renderItem = ({ item }) => {
-    
-// console.log(item)
+    // console.log(item)
     return (
       <View style={{ marginBottom: spacing[4] }}>
         <Pressable
@@ -86,15 +91,27 @@ export default function Home({ user, navigation }) {
           </View>
           <AntDesign
             onPress={() => {
-              deleteDoc(doc(db,"notes",item.id))
-              showMessage({
-                message: "Your Note Deleted",
-                type: "info",
-              });
-    
-            }
-            
-            }
+              Alert.alert("DELETE NOTE", "Are you sure ?", [
+               
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("canceled"),
+                  
+                },
+                {
+                  text: "OK",
+                  onPress: () => {
+                    setRemoveLoading(true);
+                    deleteDoc(doc(db, "notes", item.id));
+                    showMessage({
+                      message: "Your Note Deleted",
+                      type: "info",
+                    });
+                    setRemoveLoading(false);
+                  },
+                },
+              ]);
+            }}
             style={{ position: "absolute", alignSelf: "flex-end", padding: 10 }}
             name="delete"
             size={24}
@@ -105,10 +122,12 @@ export default function Home({ user, navigation }) {
     );
   };
 
-  if(loading){
-    return <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-      <ActivityIndicator color={colors.green} size="large"/>
-    </View>
+  if (loading) {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <ActivityIndicator color={colors.green} size="large" />
+      </View>
+    );
   }
 
   return (
@@ -130,12 +149,27 @@ export default function Home({ user, navigation }) {
           <FlatList
             data={notes}
             renderItem={renderItem}
-            keyExtractor={(item,index) => index}
+            keyExtractor={(item, index) => index}
           />
         </View>
-        {
-          notes.length ==0? <View ><Text preset="h3" style={{padding:spacing[4],justifyContent:"center",alignItems:"center",marginTop:20,color:colors.orange}}>Your Note is Empty...Please Add Note</Text></View>:""
-        }
+        {notes.length == 0 ? (
+          <View>
+            <Text
+              preset="h3"
+              style={{
+                padding: spacing[4],
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 20,
+                color: colors.orange,
+              }}
+            >
+              Your Note is Empty...Please Add Note
+            </Text>
+          </View>
+        ) : (
+          ""
+        )}
       </ScrollView>
     </SafeAreaView>
   );
