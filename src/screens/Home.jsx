@@ -30,7 +30,7 @@ import { showMessage } from "react-native-flash-message";
 export default function Home({ user, navigation }) {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [removeLoading, setRemoveLoading] = useState(false);
   //data lestener
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function Home({ user, navigation }) {
         // An error happened.
       });
   };
- 
+
   const renderItem = ({ item }) => {
     // console.log(item)
     return (
@@ -92,11 +92,9 @@ export default function Home({ user, navigation }) {
           <AntDesign
             onPress={() => {
               Alert.alert("DELETE NOTE", "Are you sure ?", [
-               
                 {
                   text: "Cancel",
                   onPress: () => console.log("canceled"),
-                  
                 },
                 {
                   text: "OK",
