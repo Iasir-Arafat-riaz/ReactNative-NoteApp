@@ -19,7 +19,10 @@ export default function Input({ placeholder, secureTextEntry, onChange,autoCapit
 const styles = StyleSheet.create({
   textInput: {
     // height: 40,
-    padding: 10,
+    paddingTop: 10,
+    paddingHorizontal:10,
+    paddingBottom:5,
+    
     borderBottomWidth: 1,
     borderColor: colors.gray,
     marginBottom: 18,
